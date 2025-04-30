@@ -1,0 +1,24 @@
+{
+    "format_version": 2,
+    "header": {
+      "name": "Magic Man",
+      "description": "by abcdave",
+      "uuid": "d3159c34-2287-11f0-81e7-57b077f9d0af",
+      "version": [1, 0, 0],
+      "min_engine_version": [1, 18, 0]
+    },
+    "modules": [
+      {
+        "type": "resources",
+        "uuid": "c829b922-2287-11f0-96b7-2fb2540d8f0c",
+        "version": [1, 0, 0]
+      }
+    ],
+    "dependencies": [
+      {
+        "uuid": "b65c5984-2287-11f0-b08e-0ba694be2b13",
+        "version": [1, 0, 0]
+      }
+    ]
+  }
+  

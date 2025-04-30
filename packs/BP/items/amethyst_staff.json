@@ -1,0 +1,41 @@
+{
+  "format_version": "1.21.70",
+  "minecraft:item": {
+    "description": {
+      "identifier": "dave:amethyst_staff",
+      "menu_category": { 
+			  "category": "equipment",
+				"group": "minecraft:itemGroup.name.staff"
+			} 
+    },
+    "components": {
+      "minecraft:max_stack_size": 1,
+      "minecraft:icon": "amethyst_staff",
+      "minecraft:tags": {
+          "tags": [
+              "dave:item_cast_spell"
+          ]
+      },
+			"minecraft:cooldown": {
+				"category": "cast",
+				"duration": 0.7
+			},
+      "minecraft:display_name": {
+          "value": "Amethyst Staff"
+      },
+			"minecraft:enchantable": {
+				"slot": "shears",
+				"value": 10
+			},
+			"minecraft:durability": {
+				"max_durability": 128
+			},
+      "minecraft:should_despawn": false,
+      "minecraft:hand_equipped": true,
+      "minecraft:use_modifiers": {
+        "use_duration": 99999,
+        "movement_modifier": 0.25
+      }
+    }
+  }
+}

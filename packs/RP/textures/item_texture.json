@@ -1,0 +1,60 @@
+{
+  "resource_pack_name": "vanilla",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "magic_book": {
+      "textures": "textures/items/magic_book"
+    },
+    "magic_ledger": {
+      "textures": "textures/items/magic_ledger"
+    },
+    "magic_script": {
+      "textures": "textures/items/magic_script"
+    },
+    "fire_magic_script": {
+      "textures": "textures/items/fire_magic_script"
+    },
+    "thunder_magic_script": {
+      "textures": "textures/items/thunder_magic_script"
+    },
+    "wind_magic_script": {
+      "textures": "textures/items/wind_magic_script"
+    },
+    "ice_magic_script": {
+      "textures": "textures/items/ice_magic_script"
+    },
+
+    "wand": {
+      "textures": "textures/items/wand"
+    },
+    "lapis_wand": {
+      "textures": "textures/items/lapis_wand"
+    },
+    "redstone_wand": {
+      "textures": "textures/items/redstone_wand"
+    },
+    "amethyst_wand": {
+      "textures": "textures/items/amethyst_wand"
+    },
+    "staff": {
+      "textures": "textures/items/staff"
+    },
+    "lapis_staff": {
+      "textures": "textures/items/lapis_staff"
+    },
+    "redstone_staff": {
+      "textures": "textures/items/redstone_staff"
+    },
+    "amethyst_staff": {
+      "textures": "textures/items/amethyst_staff"
+    },
+
+
+    "mana_potion": {
+      "textures": "textures/items/mana_potion"
+    },
+    "golden_mana_potion": {
+      "textures": "textures/items/golden_mana_potion"
+    }
+  }
+}

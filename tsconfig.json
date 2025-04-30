@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext", 
+    "moduleResolution": "node",
+    "outDir": "packs/BP/scripts",
+    "strict": true,              
+    "esModuleInterop": false,    
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "noEmitOnError": true,        
+    "declaration": false,  
+    "allowJs": true,
+    "sourceMap": false,               
+    "isolatedModules": true,
+    "incremental": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.js"],
+  "exclude": ["node_modules", "packs"]
+}

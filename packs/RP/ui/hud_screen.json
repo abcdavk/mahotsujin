@@ -1,0 +1,183 @@
+{
+  "namespace": "hud",
+  "title_label_test": {
+    "type": "label",
+    "text": "#text",
+    "anchor_from": "bottom_middle",
+    "anchor_to": "bottom_middle",
+    "controls": [
+      {
+        "health_bg": {
+          "type": "image",
+          "texture": "#texture",
+          "anchor_from": "bottom_middle",
+          "anchor_to": "bottom_middle",
+          "size": [
+            5,
+            13
+          ],
+          "offset": [
+            96,
+            -28
+          ],
+          "bindings": [
+            {
+              "binding_name": "#show_survival_ui",
+              "binding_name_override": "#visible"
+            },
+            {
+              "binding_type": "view",
+              "source_control_name": "title_ui_data_control",
+              "source_property_name": "#preserved_text",
+              "target_property_name": "#preserved_text"
+            },
+            {
+              "binding_type": "view",
+              "source_property_name": "( ('§z') + ('textures/ui/mana_bar' + (#preserved_text -  ('%.14s' * #preserved_text) )) )",
+              "target_property_name": "#texture"
+            }
+          ]
+        }
+      },
+      
+      {
+        "health_fg": {
+          "type": "image",
+          "texture": "#texture",
+          "anchor_from": "bottom_middle",
+          "anchor_to": "bottom_middle",
+          "clip_direction": "down",
+          "clip_pixelperfect": false,
+          "$clip_max": 10.0,
+          "size": [
+            5,
+            13
+          ],
+          "offset": [
+            96,
+            -28
+          ],
+          "bindings": [
+            {
+              "binding_name": "#show_survival_ui",
+              "binding_name_override": "#visible"
+            },
+            {
+              "binding_type": "view",
+              "source_control_name": "title_ui_data_control",
+              "source_property_name": "#preserved_text",
+              "target_property_name": "#preserved_text"
+            },
+            {
+              "binding_type": "view",
+              "source_property_name": "( ('§z') + ('textures/ui/mana_bar' + (#preserved_text -  ('%.9s' * #preserved_text) )) )",
+              "target_property_name": "#texture"
+            },
+            {
+              "binding_type": "view",
+              "source_property_name": "((#preserved_text - ('%.4s' * #preserved_text) * 1) / $clip_max)",
+              "target_property_name": "#clip_ratio"
+            }
+          ]
+        }
+      }
+    ]
+  },
+
+  "title_data_control": {
+    "$update_string": "Mn:",
+    "type": "panel",
+    "size": [
+      0,
+      0
+    ],
+    "bindings": [
+      {
+        "binding_name": "#hud_title_text_string"
+      },
+      {
+        "binding_name": "#hud_title_text_string",
+        "binding_name_override": "#preserved_text",
+        "binding_condition": "visibility_changed"
+      },
+      {
+        "binding_type": "view",
+        "source_property_name": "(not (#hud_title_text_string = #preserved_text) and not ((#hud_title_text_string - $update_string) = #hud_title_text_string))",
+        "target_property_name": "#visible"
+      }
+    ]
+  },
+  "root_panel": {
+    "modifications": [
+      {
+        "array_name": "controls",
+        "operation": "insert_front",
+        "value": [
+          {
+            "title_ui_data_control@hud.title_data_control": {}
+          },
+          {
+            "title_label_test@hud.title_label_test": {}
+          }
+        ]
+      }
+    ]
+  },
+  "hud_title_text": {
+    "visible": true,
+    "type": "stack_panel",
+    "orientation": "vertical",
+    "offset": [ 0, -19 ],
+    "size": [ 16, 16 ],
+    "layer": 1,
+    "propagate_alpha": false,
+    "controls": [
+      {
+        "title_frame": {
+          "type": "panel",
+          "size": [ "50%", "50%cm" ],
+          "controls": [
+            {
+              "title_background": {
+                "type": "image",
+                "size": [ "25%sm + 30px", "25%sm + 6px" ],
+                "texture": "textures/ui/none"
+              }
+            },
+            {
+              "title": {
+                "type": "label",
+                "anchor_from": "top_middle",
+                "anchor_to": "top_middle",
+                "color": "$title_command_text_color",
+                "text": "#text",
+                "layer": 31,
+                "localize": false,
+                "size": [ 180, 16 ],
+                "variables": [
+                  {
+                    "requires": "(not $title_shadow)",
+                    "$show_shadow": false
+                  },
+                  {
+                    "requires": "$title_shadow",
+                    "$show_shadow": true
+                  }
+                ],
+                "text_alignment": "center",
+                "offset": [ 0, 6 ],
+                "bindings": [
+                  {
+                    "binding_name": "#hud_title_text_string",
+                    "binding_name_override": "#text",
+                    "binding_type": "global"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

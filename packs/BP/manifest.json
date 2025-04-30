@@ -1,0 +1,40 @@
+{
+    "format_version": 2,
+    "header": {
+      "name": "Magic Man",
+      "description": "by abcdave",
+      "uuid": "b65c5984-2287-11f0-b08e-0ba694be2b13",
+      "version": [1, 0, 0],
+      "min_engine_version": [1, 18, 0]
+    },
+    "modules": [
+      {
+        "description": "Script resources",
+        "language": "javascript",
+        "type": "script",
+        "uuid": "e84c71cc-2287-11f0-a7ac-0b5257336742",
+        "version": [0, 0, 1],
+        "entry": "scripts/main.js"
+      },
+      {
+        "type": "data",
+        "uuid": "de20a61e-2287-11f0-a2ef-ebdfb5424aa9",
+        "version": [1, 0, 0]
+      }
+    ],
+    "dependencies": [
+      {
+        "uuid": "d3159c34-2287-11f0-81e7-57b077f9d0af",
+        "version": [1, 0, 0]
+      },
+      {
+        "module_name": "@minecraft/server",
+        "version": "1.18.0"
+      },
+      {
+        "module_name": "@minecraft/server-ui",
+        "version": "1.3.0"
+      }
+    ]
+  }
+  

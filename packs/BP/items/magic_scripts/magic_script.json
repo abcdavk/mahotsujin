@@ -1,0 +1,25 @@
+{
+  "format_version": "1.21.70",
+  "minecraft:item": {
+    "description": {
+      "identifier": "dave:magic_script",
+      "menu_category": { 
+			  "category": "items",
+				"group": "minecraft:itemGroup.name.enchantedBook"
+			} 
+    },
+    "components": {
+      "minecraft:max_stack_size": 1,
+      "minecraft:icon": "magic_script",
+      "minecraft:tags": {
+        "tags": [
+          "dave:magic_script"
+        ]
+      },
+      "minecraft:display_name": {
+        "value": "Magic Script"
+      },
+      "minecraft:should_despawn": false
+    }
+  }
+}
