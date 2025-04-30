@@ -1,8 +1,8 @@
-{
+{ 
   "format_version": "1.21.70",
   "minecraft:item": {
     "description": {
-      "identifier": "ms:fireball",
+      "identifier": "fire:fireball",
       "menu_category": { 
 			  "category": "items",
 				"group": "minecraft:itemGroup.name.enchantedBook"
