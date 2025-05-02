@@ -1,6 +1,6 @@
 import { world, EntityComponentTypes, ItemStack } from "@minecraft/server";
 import { customPotions } from "../constants/potions";
-import { UserInterface } from "../class/UserInterface";
+import { ManaSystem } from "../class/ManaSystem";
 
 world.afterEvents.itemCompleteUse.subscribe(({
 	itemStack,
@@ -12,6 +12,6 @@ world.afterEvents.itemCompleteUse.subscribe(({
 		let con = inv?.container
   	if (!potion || !inv || !con) return;
 		con.setItem(player.selectedSlotIndex, new ItemStack("minecraft:glass_bottle"));
-		let playerUI = new UserInterface(player).addMana(potion.mana_regen, potion.golden_mana);
+		let manaSystem = new ManaSystem(player).addMana(potion.mana_regen, potion.golden_mana);
 	}
 });

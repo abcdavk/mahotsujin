@@ -1,6 +1,6 @@
 import { world, system, Dimension, Player, EntityComponentTypes, EquipmentSlot, Vector3 } from "@minecraft/server";
 import { magicWeapons } from "../constants/magicWeapons";
-import { UserInterface } from "../class/UserInterface";
+import { ManaSystem } from "../class/ManaSystem";
 import { spellsRegistry } from "../constants/spells";
 import { CreateParticle } from "../class/CreateParticle";
 
@@ -19,19 +19,22 @@ world.afterEvents.itemStartUse.subscribe(({ itemStack, source: player }) => {
   let spellOnItem = offhandItem?.getDynamicProperty("dave:spell_binding") as string;
   let spellSelected: number  = spellOnItem ? JSON.parse(spellOnItem)[offhandItem?.getDynamicProperty("dave:spell_selected") as number] : undefined;
   let spellCastDuration = spellSelected !== undefined ? spellsRegistry[spellSelected].casting_speed : 0;
+
   // Start counting use duration
   let runId = system.runInterval(() => {
     useCounter++;
-    let completeTick = weapon.use_duration + spellCastDuration;
-    new CreateParticle(player, dimension, spellSelected).spawnByTick(useCounter, completeTick);
-    player.runCommand('camerashake add @s 0.05 0.1 positional');
     player.playAnimation("animation.magic_weapon.casting");
+    let createParticle = new CreateParticle(player, dimension, spellSelected);
+    let completeTick = weapon.use_duration + spellCastDuration;
+    let manaSystem = new ManaSystem(player);
+
+    if (!manaSystem.isManaEnough(spellsRegistry[spellSelected].mana_usage)) return;
+    player.runCommand('camerashake add @s 0.05 0.1 positional');
+    createParticle.spawnByTick(useCounter, completeTick);
     if (useCounter < completeTick) {
-      // ==== Endpoint- undetetected
-      
       player.onScreenDisplay.setActionBar(`Use Duration: ${useCounter}`);
     } else {
-      new CreateParticle(player, dimension, spellSelected).spawnLastTick()
+      createParticle.spawnLastTick()
       player.onScreenDisplay.setActionBar(`It's time to cast!!!`);
     }
   });
@@ -44,15 +47,17 @@ world.afterEvents.itemStartUse.subscribe(({ itemStack, source: player }) => {
 
       // Stop counting
       system.clearRun(runId);
-
+      let manaSystem = new ManaSystem(player);
       if (useCounter >= weapon.use_duration) {
+        player.playAnimation("animation.magic_weapon.casting_done");
+        player.onScreenDisplay.setActionBar(`Casting spell...`);
+        if (!manaSystem.isManaEnough(spellsRegistry[spellSelected].mana_usage)) return;
+        
         // Casting success
         if (spellSelected !== undefined) {
           spellsRegistry[spellSelected].execute(player, dimension);
         }
-        player.playAnimation("animation.magic_weapon.casting_done");
-        player.onScreenDisplay.setActionBar(`Casting spell...`);
-        new UserInterface(player).reduceMana(3);
+        manaSystem.reduceMana(spellsRegistry[spellSelected].mana_usage);
       } else {
         // Casting failed
         player.playAnimation("animation.magic_weapon.casting_done");

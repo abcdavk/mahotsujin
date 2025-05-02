@@ -1,6 +1,6 @@
 import { Player } from "@minecraft/server";
 
-export class UserInterface {
+export class ManaSystem {
   private player: Player;
   private currentMana: number;
 
@@ -50,5 +50,9 @@ export class UserInterface {
     this.player.onScreenDisplay.setTitle(
       `Mn:${mn.toString().padStart(2, "0")};Nx:${nx};Pv:${pv}`
     );
+  }
+
+  isManaEnough(manaRequired: number): boolean {
+    return this.currentMana >= manaRequired;
   }
 }

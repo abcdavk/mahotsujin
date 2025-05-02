@@ -1,62 +1,20 @@
-import { Block, Dimension, Player, TicksPerSecond, Vector3 } from "@minecraft/server";
+import { Dimension, Player, TicksPerSecond } from "@minecraft/server";
 import { Unicode } from "../utils/unicode";
-import { CreateParticle } from "../class/CreateParticle";
+import { throwableMagicHandler } from "../systems/magicHandler";
+import { ISpellRegistry } from "../utils/interfaces";
 
-export const spellsRegistry = [
+export const spellsRegistry: ISpellRegistry[] = [
   {
     id: "fire:fire_ball",
     name: `${Unicode.fire} Fire Ball`,
     damage: 5,
     range: 64,
-    holdable: false,
     mana_usage: 2,
     area_effect: 4,
     crowd_controll: false,
     casting_speed: 1.0 * TicksPerSecond,
     execute: function(player: Player, dimension: Dimension) {
-      const entityTarget = player.getEntitiesFromViewDirection({ maxDistance: this.range })?.[0]?.entity;
-      const blockTarget = !entityTarget 
-        ? player.getBlockFromViewDirection({ maxDistance: this.range })?.block 
-        : null;
-    
-      const viewDir = player.getViewDirection();
-      const origin: Vector3 = {
-        x: player.location.x + viewDir.x * 2.0,
-        y: player.getHeadLocation().y,
-        z: player.location.z + viewDir.z * 2.0,
-      };
-    
-      const projectile = dimension.spawnEntity("fire:fireball", origin);
-    
-      let targetPos: Vector3;
-      if (entityTarget) {
-        targetPos = entityTarget.location;
-      } else if (blockTarget) {
-        targetPos = blockTarget.location;
-      } else {
-        // Tidak ada target: arahkan berdasarkan viewDir
-        targetPos = {
-          x: origin.x + viewDir.x,
-          y: origin.y + viewDir.y,
-          z: origin.z + viewDir.z,
-        };
-      }
-    
-      const dx = targetPos.x - origin.x;
-      const dy = targetPos.y - origin.y;
-      const dz = targetPos.z - origin.z;
-      const length = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    
-      if (length === 0) return;
-    
-      const speed = 2;
-      const impulse: Vector3 = {
-        x: (dx / length) * speed,
-        y: (dy / length) * speed,
-        z: (dz / length) * speed,
-      };
-    
-      projectile.applyImpulse(impulse);
+      throwableMagicHandler(player, dimension, this);
     }     
   },
   {
@@ -64,7 +22,6 @@ export const spellsRegistry = [
     name: `${Unicode.fire} Fire Breath`,
     damage: 5,
     range: 4,
-    holdable: true,
     mana_usage: 0.5,
     area_effect: 4,
     crowd_controll: false,
@@ -76,7 +33,6 @@ export const spellsRegistry = [
     name: `${Unicode.fire} Blast Vortex`,
     damage: 3,
     range: 4,
-    holdable: false,
     mana_usage: 2,
     area_effect: 4,
     crowd_controll: true,

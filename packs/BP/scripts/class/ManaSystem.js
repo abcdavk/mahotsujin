@@ -1,4 +1,4 @@
-export class UserInterface {
+export class ManaSystem {
     constructor(player) {
         this.player = player;
         this.currentMana = player.getDynamicProperty("dave:currentMana") ?? 0;
@@ -45,5 +45,8 @@ export class UserInterface {
         if (mn < 0)
             mn = 0;
         this.player.onScreenDisplay.setTitle(`Mn:${mn.toString().padStart(2, "0")};Nx:${nx};Pv:${pv}`);
+    }
+    isManaEnough(manaRequired) {
+        return this.currentMana >= manaRequired;
     }
 }
