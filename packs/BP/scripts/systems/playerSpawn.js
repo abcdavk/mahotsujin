@@ -1,5 +1,5 @@
 import { world } from "@minecraft/server";
-import { UserInterface } from "../ui/UserInterface";
+import { UserInterface } from "../class/UserInterface";
 world.afterEvents.playerSpawn.subscribe(({ player }) => {
     let playerUI = new UserInterface(player).updateManaBar();
     if (player.hasTag("dave:magicman_setup"))

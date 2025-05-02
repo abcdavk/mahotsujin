@@ -68,7 +68,7 @@ system.afterEvents.scriptEventReceive.subscribe(({
     } else {
       let selectedSpell = JSON.stringify([parseInt(message)]);
       itemHand.setDynamicProperty("dave:spell_binding", selectedSpell);
-
+      itemHand.setDynamicProperty("dave:spell_selected", 0)
       itemHand.setLore([
         `§r§7Spells: (1/${spellBook.max_spells})`,
         `§r§7 - ${spellAtributes.name}`

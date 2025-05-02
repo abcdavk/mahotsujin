@@ -1,6 +1,6 @@
 import { world, EntityComponentTypes, ItemStack } from "@minecraft/server";
 import { customPotions } from "../constants/potions";
-import { UserInterface } from "../ui/UserInterface";
+import { UserInterface } from "../class/UserInterface";
 
 world.afterEvents.itemCompleteUse.subscribe(({
 	itemStack,

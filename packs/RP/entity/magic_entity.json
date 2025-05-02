@@ -1,0 +1,11 @@
+{
+  "format_version": "1.20.41",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "dave:magic_entity",
+      "min_engine_version": "1.8.0",
+      "materials": { "default": "entity_alphablend", "alpha": "entity_alphablend" },
+      "textures": { "default": "textures/none" }
+    }
+  }
+}
