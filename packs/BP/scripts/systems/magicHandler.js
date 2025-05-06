@@ -1,41 +1,152 @@
-export function throwableMagicHandler(player, dimension, spellReg) {
-    const entityTarget = player.getEntitiesFromViewDirection({ maxDistance: spellReg.range })?.[0]?.entity;
-    const blockTarget = !entityTarget
-        ? player.getBlockFromViewDirection({ maxDistance: spellReg.range })?.block
-        : null;
+import { EntityDamageCause, system, world, MolangVariableMap } from "@minecraft/server";
+const playerCache = {};
+export function throwableMagicHandler(player, dimension, projectileSetting, spellReg) {
     const viewDir = player.getViewDirection();
     const origin = {
-        x: player.location.x + viewDir.x * 2.0,
-        y: player.getHeadLocation().y + 4,
-        z: player.location.z + viewDir.z * 2.0,
+        x: player.location.x + viewDir.x,
+        y: player.getHeadLocation().y,
+        z: player.location.z + viewDir.z,
     };
-    const projectile = dimension.spawnEntity(spellReg.id, origin);
-    let targetPos;
-    if (entityTarget) {
-        targetPos = entityTarget.location;
+    const blockViewDir = player.getBlockFromViewDirection({ maxDistance: spellReg.range });
+    const entityViewDir = player.getEntitiesFromViewDirection({ maxDistance: spellReg.range });
+    let targetLocation;
+    if (entityViewDir.length > 0) {
+        targetLocation = entityViewDir[0].entity.location;
     }
-    else if (blockTarget) {
-        targetPos = blockTarget.location;
+    else if (blockViewDir) {
+        targetLocation = blockViewDir.block.location;
     }
     else {
-        // Tidak ada target: arahkan berdasarkan viewDir
-        targetPos = {
-            x: origin.x + viewDir.x,
-            y: origin.y + viewDir.y,
-            z: origin.z + viewDir.z,
+        targetLocation = {
+            x: player.location.x + viewDir.x * spellReg.range,
+            y: player.getHeadLocation().y + viewDir.y * spellReg.range,
+            z: player.location.z + viewDir.z * spellReg.range,
         };
     }
-    const dx = targetPos.x - origin.x;
-    const dy = targetPos.y - origin.y;
-    const dz = targetPos.z - origin.z;
+    let projectile = dimension.spawnEntity("dave:throwable", origin);
+    projectile.runCommand(`replaceitem entity @s slot.weapon.mainhand 0 ${projectileSetting.icon}`);
+    const spellProperties = {
+        damage: spellReg.damage,
+        area_effect: spellReg.area_effect,
+        crowd_control: spellReg.crowd_control
+    };
+    projectile.setDynamicProperty("magic:particle_color", JSON.stringify(projectileSetting.rgba));
+    projectile.setDynamicProperty("magic:spell_properties", JSON.stringify(spellProperties));
+    projectile.setDynamicProperty("magic:source_id", player.id);
+    playerCache[player.id] = player;
+    const dx = targetLocation.x - origin.x;
+    const dy = targetLocation.y - origin.y;
+    const dz = targetLocation.z - origin.z;
+    const speed = 4;
     const length = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    if (length === 0)
-        return;
-    const speed = 2;
     const impulse = {
         x: (dx / length) * speed,
         y: (dy / length) * speed,
-        z: (dz / length) * speed,
+        z: (dz / length) * speed
     };
     projectile.applyImpulse(impulse);
 }
+export function holdableMagicHandler(player, dimension, holdSetting, spellReg) {
+    const [red, green, blue, alpha] = holdSetting.rgba;
+    let holdCounter = 0;
+    const staticViewDir = player.getViewDirection();
+    let pointer = dimension.spawnEntity("dave:pointer", {
+        x: player.location.x + staticViewDir.x * 2,
+        y: player.location.y + staticViewDir.y * 2,
+        z: player.location.z + staticViewDir.z * 2
+    });
+    const runId = system.runInterval(() => {
+        if (!player.isValid()) {
+            system.clearRun(runId);
+            return;
+        }
+        holdCounter++;
+        if (holdCounter >= holdSetting.holdDuration) {
+            system.clearRun(runId);
+            return;
+        }
+        if (holdSetting.screenShake === true)
+            player.runCommand('camerashake add @s 0.05 0.1 positional');
+        const viewDir = player.getViewDirection();
+        const origin = {
+            x: player.location.x + viewDir.x,
+            y: player.getHeadLocation().y,
+            z: player.location.z + viewDir.z,
+        };
+        const length = {
+            x: viewDir.x * holdSetting.speed,
+            y: viewDir.y * holdSetting.speed,
+            z: viewDir.z * holdSetting.speed
+        };
+        const molang = new MolangVariableMap();
+        molang.setFloat("variable.dir_x", length.x);
+        molang.setFloat("variable.dir_y", length.y);
+        molang.setFloat("variable.dir_z", length.z);
+        molang.setFloat("variable.color_red", red);
+        molang.setFloat("variable.color_green", green);
+        molang.setFloat("variable.color_blue", blue);
+        molang.setFloat("variable.color_alpha", alpha);
+        molang.setFloat("variable.particle_speed", holdSetting.speed);
+        molang.setFloat("variable.max_age", holdSetting.particle_maxAge);
+        dimension.spawnParticle("magic:breath", origin, molang);
+        pointer.teleport({
+            x: player.location.x + staticViewDir.x * spellReg.range,
+            y: player.location.y + staticViewDir.y * spellReg.range,
+            z: player.location.z + staticViewDir.z * spellReg.range
+        });
+        if (holdCounter % 5 === 1) {
+            const entityViewDir = player.getEntitiesFromViewDirection({ maxDistance: spellReg.range })[0];
+            if (!entityViewDir)
+                return;
+            dimension.getEntities({
+                location: pointer.location,
+                maxDistance: spellReg.area_effect
+            }).forEach(entity => {
+                if (entity.id === player.id || entity.typeId === "minecraft:item")
+                    return;
+                entity.applyDamage(spellReg.damage, {
+                    cause: EntityDamageCause.fire,
+                    damagingProjectile: player
+                });
+            });
+        }
+    });
+}
+system.afterEvents.scriptEventReceive.subscribe(({ message, id, sourceEntity }) => {
+    if (sourceEntity?.typeId === "dave:throwable") {
+        if (id === "magic:effect") {
+            let projectile = sourceEntity;
+            let particleColor = JSON.parse(projectile.getDynamicProperty("magic:particle_color"));
+            let spellProperties = JSON.parse(projectile.getDynamicProperty("magic:spell_properties"));
+            let sourceId = projectile.getDynamicProperty("magic:source_id");
+            let dimension = world.getDimension(projectile.dimension.id);
+            const sourcePlayer = world.getPlayers().find(p => p.id === sourceId);
+            dimension.getEntities({
+                maxDistance: spellProperties.area_effect,
+                location: projectile.location
+            }).forEach(entity => {
+                if (entity.id === sourceId || entity.typeId === "minecraft:item")
+                    return;
+                let [red, green, blue, alpha] = particleColor;
+                let molang = new MolangVariableMap();
+                molang.setFloat("variable.radius", spellProperties.area_effect);
+                molang.setFloat("variable.color_red", red);
+                molang.setFloat("variable.color_green", green);
+                molang.setFloat("variable.color_blue", blue);
+                molang.setFloat("variable.color_alpha", alpha);
+                dimension.spawnParticle("magic:explode", projectile.location, molang);
+                const dist = Math.sqrt((entity.location.x - projectile.location.x) ** 2 +
+                    (entity.location.y - projectile.location.y) ** 2 +
+                    (entity.location.z - projectile.location.z) ** 2);
+                const falloff = Math.max(0.25, 1 - (dist / spellProperties.area_effect));
+                const scaledDamage = Math.floor(spellProperties.damage * falloff);
+                // console.warn(scaledDamage)
+                entity.applyDamage(scaledDamage, {
+                    cause: EntityDamageCause.fire,
+                    damagingProjectile: sourcePlayer,
+                });
+            });
+            projectile.remove();
+        }
+    }
+});

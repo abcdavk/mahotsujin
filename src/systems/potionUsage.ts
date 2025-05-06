@@ -1,6 +1,6 @@
 import { world, EntityComponentTypes, ItemStack } from "@minecraft/server";
 import { customPotions } from "../constants/potions";
-import { ManaSystem } from "../class/ManaSystem";
+import { ManaSystem } from "../classes/ManaSystem";
 
 world.afterEvents.itemCompleteUse.subscribe(({
 	itemStack,

@@ -1,0 +1,46 @@
+{
+	"format_version": "1.10.0",
+	"particle_effect": {
+		"description": {
+			"identifier": "magic:breath",
+			"basic_render_parameters": {
+				"material": "particles_add",
+				"texture": "textures/particle/particles"
+			}
+		},
+		"components": {
+			"minecraft:emitter_rate_steady": {
+				"spawn_rate": 30,
+				"max_particles": 100
+			},
+			"minecraft:emitter_lifetime_looping": {
+				"active_time": 1
+			},
+			"minecraft:emitter_shape_point": {},
+			"minecraft:particle_lifetime_expression": {
+				"max_lifetime": "variable.max_age"
+			},
+			"minecraft:particle_initial_spin": {
+				"rotation": "math.random(0, 90)"
+			},
+			"minecraft:particle_initial_speed": "variable.particle_speed",
+			"minecraft:particle_motion_dynamic": {
+				"linear_acceleration": ["variable.dir_x", "variable.dir_y","variable.dir_z"],
+				"linear_drag_coefficient": 2
+			},
+			"minecraft:particle_appearance_billboard": {
+				"size": ["math.clamp(variable.particle_lifetime - v.particle_age, 0, 0.5)", "math.clamp(variable.particle_lifetime - v.particle_age, 0, 0.5)"],
+				"facing_camera_mode": "rotate_xyz",
+				"uv": {
+					"texture_width": 128,
+					"texture_height": 128,
+					"uv": [48, 88],
+					"uv_size": [9, 9]
+				}
+			},
+			"minecraft:particle_appearance_tinting": {
+				"color": ["variable.color_red", "variable.color_green", "variable.color_blue", "variable.color_alpha"]
+			}
+		}
+	}
+}

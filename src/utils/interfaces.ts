@@ -7,7 +7,12 @@ export interface ISpellRegistry {
   range: number;
   mana_usage: number;
   area_effect: number;
-  crowd_controll: boolean;
+  crowd_control: boolean;
   casting_speed: number;
   execute: (player: Player, dimension: Dimension) => void;
+}
+
+export interface IProjectileSetting {
+  icon: string,
+  rgba: [number, number, number, number]
 }

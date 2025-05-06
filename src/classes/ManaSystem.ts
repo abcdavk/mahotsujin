@@ -1,4 +1,4 @@
-import { Player } from "@minecraft/server";
+import { GameMode, Player } from "@minecraft/server";
 
 export class ManaSystem {
   private player: Player;
@@ -53,6 +53,10 @@ export class ManaSystem {
   }
 
   isManaEnough(manaRequired: number): boolean {
-    return this.currentMana >= manaRequired;
+    let isAllowed: boolean = false;
+    if (this.currentMana >= manaRequired || this.player.getGameMode() === GameMode.creative) {
+      isAllowed = true
+    }
+    return isAllowed;
   }
 }

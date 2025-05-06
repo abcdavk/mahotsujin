@@ -1,8 +1,8 @@
 import { world, system, Dimension, Player, EntityComponentTypes, EquipmentSlot, Vector3 } from "@minecraft/server";
 import { magicWeapons } from "../constants/magicWeapons";
-import { ManaSystem } from "../class/ManaSystem";
+import { ManaSystem } from "../classes/ManaSystem";
 import { spellsRegistry } from "../constants/spells";
-import { CreateParticle } from "../class/CreateParticle";
+import { CreateParticle } from "../classes/CreateParticle";
 
 world.afterEvents.itemStartUse.subscribe(({ itemStack, source: player }) => {
   if (!itemStack.hasTag("dave:item_cast_spell")) return;
@@ -21,14 +21,14 @@ world.afterEvents.itemStartUse.subscribe(({ itemStack, source: player }) => {
   let spellCastDuration = spellSelected !== undefined ? spellsRegistry[spellSelected].casting_speed : 0;
 
   // Start counting use duration
+  let completeTick = weapon.use_duration + spellCastDuration;
   let runId = system.runInterval(() => {
     useCounter++;
     player.playAnimation("animation.magic_weapon.casting");
     let createParticle = new CreateParticle(player, dimension, spellSelected);
-    let completeTick = weapon.use_duration + spellCastDuration;
     let manaSystem = new ManaSystem(player);
 
-    if (!manaSystem.isManaEnough(spellsRegistry[spellSelected].mana_usage)) return;
+    if (!manaSystem.isManaEnough(spellsRegistry[spellSelected].mana_usage) || player.isSneaking) return;
     player.runCommand('camerashake add @s 0.05 0.1 positional');
     createParticle.spawnByTick(useCounter, completeTick);
     if (useCounter < completeTick) {
@@ -48,10 +48,10 @@ world.afterEvents.itemStartUse.subscribe(({ itemStack, source: player }) => {
       // Stop counting
       system.clearRun(runId);
       let manaSystem = new ManaSystem(player);
-      if (useCounter >= weapon.use_duration) {
+      if (useCounter >= completeTick) {
         player.playAnimation("animation.magic_weapon.casting_done");
         player.onScreenDisplay.setActionBar(`Casting spell...`);
-        if (!manaSystem.isManaEnough(spellsRegistry[spellSelected].mana_usage)) return;
+        if (!manaSystem.isManaEnough(spellsRegistry[spellSelected].mana_usage) || player.isSneaking) return;
         
         // Casting success
         if (spellSelected !== undefined) {

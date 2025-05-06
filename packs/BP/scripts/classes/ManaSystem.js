@@ -1,3 +1,4 @@
+import { GameMode } from "@minecraft/server";
 export class ManaSystem {
     constructor(player) {
         this.player = player;
@@ -47,6 +48,10 @@ export class ManaSystem {
         this.player.onScreenDisplay.setTitle(`Mn:${mn.toString().padStart(2, "0")};Nx:${nx};Pv:${pv}`);
     }
     isManaEnough(manaRequired) {
-        return this.currentMana >= manaRequired;
+        let isAllowed = false;
+        if (this.currentMana >= manaRequired || this.player.getGameMode() === GameMode.creative) {
+            isAllowed = true;
+        }
+        return isAllowed;
     }
 }

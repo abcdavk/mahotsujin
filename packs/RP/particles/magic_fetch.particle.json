@@ -31,7 +31,7 @@
 			"minecraft:particle_initial_speed": 2,
 			"minecraft:particle_motion_dynamic": {},
 			"minecraft:particle_appearance_billboard": {
-				"size": ["variable.particle_age * 0.1", "variable.particle_age * 0.1"],
+				"size": ["math.clamp(variable.particle_lifetime - v.particle_age, 0, 0.1)", "math.clamp(variable.particle_lifetime - v.particle_age, 0, 0.1)"],
 				"facing_camera_mode": "rotate_xyz",
 				"uv": {
 					"texture_width": 1,

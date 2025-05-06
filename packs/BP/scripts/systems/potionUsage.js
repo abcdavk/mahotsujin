@@ -1,6 +1,6 @@
 import { world, EntityComponentTypes, ItemStack } from "@minecraft/server";
 import { customPotions } from "../constants/potions";
-import { ManaSystem } from "../class/ManaSystem";
+import { ManaSystem } from "../classes/ManaSystem";
 world.afterEvents.itemCompleteUse.subscribe(({ itemStack, source: player, }) => {
     if (itemStack.hasTag("dave:potion")) {
         let potion = customPotions.find((item) => item.id === itemStack.typeId);
